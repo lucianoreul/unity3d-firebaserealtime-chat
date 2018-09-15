@@ -311,7 +311,7 @@ GameObject:
   - component: {fileID: 386648263}
   - component: {fileID: 386648262}
   m_Layer: 5
-  m_Name: TextMeshPro Text
+  m_Name: DisplayTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -815,7 +815,7 @@ GameObject:
   - component: {fileID: 624465096}
   - component: {fileID: 624465095}
   m_Layer: 5
-  m_Name: TextMeshPro - InputField
+  m_Name: DisplayInputField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2856,7 +2856,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Sing Out
+  m_text: Sign Out
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2968,7 +2968,7 @@ GameObject:
   - component: {fileID: 1545374253}
   - component: {fileID: 1545374252}
   m_Layer: 5
-  m_Name: TextMeshPro Text
+  m_Name: UserTitleTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3522,7 +3522,7 @@ GameObject:
   - component: {fileID: 1752743179}
   - component: {fileID: 1752743178}
   m_Layer: 5
-  m_Name: Button
+  m_Name: GetStartBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3585,18 +3585,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1752743179}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2046009427}
-        m_MethodName: OpenPainel
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 1031676383}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.RectTransform, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1752743179
@@ -3966,6 +3955,10 @@ MonoBehaviour:
   screenResolution: {x: 0, y: 0}
   canvasScaler: {fileID: 736239170}
   timePainel: 0.26
+  username: {fileID: 1545374252}
+  displayInput: {fileID: 624465095}
+  getStartBtn: {fileID: 1752743178}
+  signOutBtn: {fileID: 0}
 --- !u!114 &2046009428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3974,7 +3967,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2046009426}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3002772354e2e15408ac83fc54544c21, type: 3}
+  m_Script: {fileID: 11500000, guid: f3d21e7179408084ea147fe1696b6912, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &2046009429

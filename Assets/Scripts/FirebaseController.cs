@@ -5,14 +5,17 @@ using Firebase;
 using Firebase.Auth;
 using Firebase.Unity.Editor;
 
-public class FirebaseConnect : MonoBehaviour 
+[RequireComponent(typeof(PainelsController))]
+public class FirebaseController : MonoBehaviour
 {
-	
+
     private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
     private string appUrl = "";
-	
-	void Start ()
-	{
+    private PainelsController painelsController;
+
+    void Start()
+    {
+        painelsController = GetComponent<PainelsController>();
         //InitializeFirebaseOnEditor();
         InitializeFirebase();
     }
@@ -43,12 +46,12 @@ public class FirebaseConnect : MonoBehaviour
 
     protected virtual void InitializeFirebase()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => 
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
         {
             var dependencyStatus = task.Result;
             if (dependencyStatus == DependencyStatus.Available)
             {
-                AuthenticateAnonymouslyUser();
+                Debug.Log("Can use this app");
             }
             else
             {
@@ -59,9 +62,9 @@ public class FirebaseConnect : MonoBehaviour
         });
     }
 
-    protected virtual void AuthenticateAnonymouslyUser()
+    public void AuthenticateAnonymouslyUser()
     {
-        FirebaseAuth.DefaultInstance.SignInAnonymouslyAsync().ContinueWith(task => 
+        FirebaseAuth.DefaultInstance.SignInAnonymouslyAsync().ContinueWith(task =>
         {
             if (task.IsCanceled)
             {
@@ -77,6 +80,13 @@ public class FirebaseConnect : MonoBehaviour
             FirebaseUser newUser = task.Result;
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 newUser.DisplayName, newUser.UserId);
+            painelsController.OpenPainel(painelsController.channelPainel);
         });
     }
+
+    public void SignOutAplication()
+    {
+        FirebaseAuth.DefaultInstance.SignOut();
+    }
+
 }
