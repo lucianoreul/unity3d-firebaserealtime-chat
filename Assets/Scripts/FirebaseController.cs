@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
 using Firebase.Auth;
+using Firebase.Database;
 using Firebase.Unity.Editor;
 
 [RequireComponent(typeof(PainelsController))]
@@ -12,6 +13,8 @@ public class FirebaseController : MonoBehaviour
     private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
     private string appUrl = "";
     private PainelsController painelsController;
+
+    public List<Channel> channels = new List<Channel>();
 
     void Start()
     {
@@ -84,9 +87,46 @@ public class FirebaseController : MonoBehaviour
         });
     }
 
+    public void GetChannelsDatabase()
+    {
+        FirebaseDatabase.DefaultInstance.GetReference("channels").GetValueAsync().ContinueWith(task => 
+        {
+
+        });
+    }
+
+    public void CreaterChannelDataBase(string title)
+    {
+        var idChannel = FirebaseDatabase.DefaultInstance.GetReference("channels").Push().Key;
+        Dictionary<string, object> ChannelUpdate = new Dictionary<string, object>();
+        Dictionary<string, object> timestamp = new Dictionary<string, object>();
+        timestamp[".sv"] = "timestamp";
+        //ChannelUpdate["channels/" + idChannel + "/idCreator"] = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+        ChannelUpdate["channels/" + idChannel + "/idCreator"] = "Testando";
+        ChannelUpdate["channels/" + idChannel + "/title"] = title;
+        ChannelUpdate["channels/" + idChannel + "/timestamp/"] = timestamp;
+        FirebaseDatabase.DefaultInstance.RootReference.UpdateChildrenAsync(ChannelUpdate);
+    }
+
     public void SignOutAplication()
     {
         FirebaseAuth.DefaultInstance.SignOut();
     }
 
+}
+
+public struct Channel
+{
+    public string idChannel;
+    public string idCreator;
+    public string title;
+    public string date;
+    public List<Messages> messages;
+}
+
+public struct Messages
+{
+    public string idMessage;
+    public string idSender;
+    public string text;
 }

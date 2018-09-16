@@ -29,7 +29,11 @@ public class PainelsController : MonoBehaviour
 
     private void Start()
     {
-        Screen.fullScreen = false;
+        ApplicationChrome.statusBarState = ApplicationChrome.navigationBarState = ApplicationChrome.States.VisibleOverContent;
+        ApplicationChrome.statusBarColor = ApplicationChrome.navigationBarColor = 0xff20B2AA;
+
+
+        //Screen.fullScreen = false;
         firebaseController = GetComponent<FirebaseController>();
         screenResolution = displayPainel.rect.size;
         channelPainel.localPosition = new Vector3(channelPainel.rect.size.x, 0, 0);
