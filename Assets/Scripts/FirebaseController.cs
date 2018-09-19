@@ -5,6 +5,8 @@ using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Unity.Editor;
+using System.Linq;
+using System;
 
 [RequireComponent(typeof(PainelsController))]
 public class FirebaseController : MonoBehaviour
@@ -13,8 +15,6 @@ public class FirebaseController : MonoBehaviour
     private DependencyStatus dependencyStatus = DependencyStatus.UnavailableOther;
     private string appUrl = "";
     private PainelsController painelsController;
-
-    public List<Channel> channels = new List<Channel>();
 
     void Start()
     {
@@ -84,14 +84,35 @@ public class FirebaseController : MonoBehaviour
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 newUser.DisplayName, newUser.UserId);
             painelsController.OpenPainel(painelsController.channelPainel);
+            painelsController.UpdateChannelsFromDataBase();
         });
     }
 
-    public void GetChannelsDatabase()
+    public void GetChannelsDatabase(List<Channel> list)
     {
         FirebaseDatabase.DefaultInstance.GetReference("channels").GetValueAsync().ContinueWith(task => 
         {
+            if (task.IsFaulted || !task.IsCompleted || task.IsCanceled)
+            {
+                Debug.Log("Database wrong!");
+                return;
+            }
 
+            DataSnapshot snapshot = task.Result;
+            if (snapshot != null && snapshot.ChildrenCount > 0)
+            {
+                foreach (var childSnapshot in snapshot.Children)
+                {
+                    if (list.Any(channelNew => channelNew.idChannel == childSnapshot.Key)) continue;
+                    var newChannel = new Channel();
+                    newChannel.idChannel = childSnapshot.Key;
+                    newChannel.nameCreator = childSnapshot.Child("idCreator").Value.ToString();
+                    newChannel.date = childSnapshot.Child("timestamp").Value.ToString();
+                    newChannel.title = childSnapshot.Child("title").Value.ToString();
+                    list.Add(newChannel);
+                }
+                painelsController.SpawnChannelsButtons();
+            }
         });
     }
 
@@ -115,10 +136,11 @@ public class FirebaseController : MonoBehaviour
 
 }
 
+[Serializable]
 public struct Channel
 {
     public string idChannel;
-    public string idCreator;
+    public string nameCreator;
     public string title;
     public string date;
     public List<Messages> messages;

@@ -7,6 +7,7 @@ public class ChannelItem : MonoBehaviour
 {
     public TMP_Text channelNumber;
     public TMP_Text channelTitle;
+    public TMP_Text channelCreatorName;
     public Button   channelBtn;
 
     public Channel channelReference;
@@ -21,7 +22,8 @@ public class ChannelItem : MonoBehaviour
 
     public void SetChannelInfos()
     {
-
+        channelTitle.text = channelReference.title;
+        channelCreatorName.text = channelReference.nameCreator;
     }
 
     private void OpenChatPainel()
