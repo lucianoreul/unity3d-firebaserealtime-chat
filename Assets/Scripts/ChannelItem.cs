@@ -28,6 +28,6 @@ public class ChannelItem : MonoBehaviour
 
     private void OpenChatPainel()
     {
-
+        
     }
 }
