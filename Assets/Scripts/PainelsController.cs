@@ -4,6 +4,7 @@ using DG.Tweening;
 using TMPro;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 [RequireComponent(typeof(FirebaseController))]
 public class PainelsController : MonoBehaviour
@@ -17,19 +18,20 @@ public class PainelsController : MonoBehaviour
     // control variable
     private Vector2 createrChannelPainelPos;
     private bool createrChannelPainelISOpen = false;
+
     [HideInInspector]
     public Channel channelReferenceSelected;
 
-    public Button teste;
-
     [Space(5)]
     [Header("Texts")]
-    public TMP_Text username;
+    public TMP_Text userName;
+    public TMP_Text chatName;
 
     [Space(5)]
     [Header("Inputs")]
     public TMP_InputField displayInput;
     public TMP_InputField newChannelName;
+    public TMP_InputField chatInput;
 
     [Space(5)]
     [Header("Buttons")]
@@ -38,10 +40,13 @@ public class PainelsController : MonoBehaviour
     public Button openCreateChannelBtn;
     public Button createChannelBtn;
     public Button refreshChannelBtn;
+    public Button sendMessage;
+    public Button returnChat;
 
     [Space(5)]
     [Header("content")]
     public GameObject channelContent;
+    public GameObject chatContent;
 
     [Space(5)]
     [Header("prefabs")]
@@ -49,7 +54,13 @@ public class PainelsController : MonoBehaviour
 
     [Space(5)]
     [Header("Lists")]
+    [HideInInspector]
     public List<GameObject> channelItens = new List<GameObject>();
+    [HideInInspector]
+    public List<GameObject> messageItens = new List<GameObject>();
+    [HideInInspector]
+    public List<string> messageItensTeste = new List<string>();
+    [HideInInspector]
     public List<Channel> channels = new List<Channel>();
 
     private FirebaseController firebaseController;
@@ -69,6 +80,11 @@ public class PainelsController : MonoBehaviour
         ConfigButtons();
     }
 
+    private void OnEnable()
+    {
+        ChannelItem.OnClickOpen += OpenChatPainel;
+    }
+
     public void ConfigButtons()
     {
         getStartBtn.onClick.AddListener(delegate
@@ -76,7 +92,7 @@ public class PainelsController : MonoBehaviour
             if (!string.IsNullOrEmpty(displayInput.text))
             {
                 firebaseController.AuthenticateAnonymouslyUser();
-                username.text = displayInput.text;
+                userName.text = displayInput.text;
                 displayInput.text = "";
             }
         });
@@ -101,15 +117,33 @@ public class PainelsController : MonoBehaviour
         {
             if (!string.IsNullOrEmpty(newChannelName.text))
             {
-                firebaseController.CreaterChannelDataBase(newChannelName.text, username.text);
+                firebaseController.CreaterChannelDataBase(newChannelName.text, userName.text);
                 newChannelName.text = "";
                 firebaseController.GetChannelsDatabase(channels);
+                createrChannelPainel.DOAnchorPos(Vector2.zero, timePainel, false);
+                createrChannelPainelISOpen = !createrChannelPainelISOpen;
             }
         });
 
         refreshChannelBtn.onClick.AddListener(delegate
         {
             firebaseController.GetChannelsDatabase(channels);
+        });
+
+        sendMessage.onClick.AddListener(delegate 
+        {
+            if (!string.IsNullOrEmpty(chatInput.text))
+            {
+                firebaseController.CreateMessage(channelReferenceSelected.idChannel, userName.text, chatInput.text);
+                chatInput.text = "";
+            }
+        });
+
+        returnChat.onClick.AddListener(delegate 
+        {
+            foreach (var item in messageItens) Destroy(item);
+            messageItens.Clear();
+            ClosePainel(chatPainel, true);
         });
     }
 
@@ -145,6 +179,16 @@ public class PainelsController : MonoBehaviour
         }
     }
 
+    public void SpawnChatMessages()
+    {
+        for (int i = 0; i < channelReferenceSelected.messages.Count; i++)
+        {
+            if (messageItensTeste.Any(messageItem => messageItem == channelReferenceSelected.messages[i].text)) continue;
+            messageItensTeste.Add(channelReferenceSelected.messages[i].text);
+            Debug.Log(channelReferenceSelected.messages[i].text);
+        }
+    }
+
     public void ClearAplication()
     {
         foreach(var item in channelItens)
@@ -152,6 +196,14 @@ public class PainelsController : MonoBehaviour
             Destroy(item);
         }
         channelItens.Clear();
+    }
+
+    private void OpenChatPainel(Channel value)
+    {
+        OpenPainel(chatPainel);
+        channelReferenceSelected = value;
+        firebaseController.ObservingChatMessages(channelReferenceSelected);
+        chatName.text = channelReferenceSelected.title;
     }
 
 }

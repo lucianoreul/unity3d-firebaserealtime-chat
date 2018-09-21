@@ -80,6 +80,7 @@ public class FirebaseController : MonoBehaviour
                     newChannel.nameCreator = childSnapshot.Child("nameCreator").Value.ToString();
                     newChannel.date = childSnapshot.Child("timestamp").Value.ToString();
                     newChannel.title = childSnapshot.Child("title").Value.ToString();
+                    newChannel.messages = new List<Messages>();
                     list.Add(newChannel);
                 }
                 painelsController.SpawnChannelsButtons();
@@ -106,9 +107,39 @@ public class FirebaseController : MonoBehaviour
         Dictionary<string, object> timestamp = new Dictionary<string, object>();
         timestamp[".sv"] = "timestamp";
         messageUpdate["messages/" + idMessage + "/nameCreator"] = nameCreator;
-        messageUpdate["messages/" + idMessage + "/title"] = text;
+        messageUpdate["messages/" + idMessage + "/message"] = text;
         messageUpdate["messages/" + idMessage + "/timestamp/"] = timestamp;
         FirebaseDatabase.DefaultInstance.RootReference.Child("channels").Child(idChannel).UpdateChildrenAsync(messageUpdate);
+
+    }
+
+    public void ObservingChatMessages(Channel currentChannel)
+    {
+        FirebaseDatabase.DefaultInstance.GetReference("channels").Child(currentChannel.idChannel).Child("messages").ValueChanged += (object sender2, ValueChangedEventArgs e2) => 
+        {
+            if (e2.DatabaseError != null)
+            {
+                Debug.LogError(e2.DatabaseError.Message);
+                return;
+            }
+            if (e2.Snapshot != null && e2.Snapshot.ChildrenCount > 0)
+            {
+                foreach (var childSnapshot in e2.Snapshot.Children)
+                {
+                    if (currentChannel.messages.Any(contentMessage => contentMessage.idMessage == childSnapshot.Key)) continue;
+                    var newMessage = new Messages();
+                    newMessage.idMessage = childSnapshot.Key;
+                    newMessage.idSender = childSnapshot.Child("nameCreator").Value.ToString();
+                    newMessage.text = childSnapshot.Child("message").Value.ToString();
+                    currentChannel.messages.Add(newMessage);
+                }
+                painelsController.SpawnChatMessages();
+            }
+        };
+    }
+
+    public void ObservingChatWriting()
+    {
 
     }
 
@@ -129,6 +160,7 @@ public struct Channel
     public List<Messages> messages;
 }
 
+[Serializable]
 public struct Messages
 {
     public string idMessage;

@@ -299,8 +299,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: -1
-  m_MinHeight: -1
+  m_MinWidth: 360
+  m_MinHeight: 50
   m_PreferredWidth: 360
   m_PreferredHeight: 50
   m_FlexibleWidth: -1
@@ -719,6 +719,7 @@ MonoBehaviour:
     nameCreator: 
     title: 
     date: 
+    messages: []
 --- !u!114 &114966836955370594
 MonoBehaviour:
   m_ObjectHideFlags: 1

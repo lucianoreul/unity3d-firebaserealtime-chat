@@ -10,13 +10,18 @@ public class ChannelItem : MonoBehaviour
     public TMP_Text channelCreatorName;
     public Button   channelBtn;
 
+    // Event for open chat painel
+    public delegate void ClickAction(Channel value);
+    public static event ClickAction OnClickOpen;
+
     public Channel channelReference;
 
     private void Start()
     {
         channelBtn.onClick.AddListener(delegate 
         {
-            OpenChatPainel();
+            // click cjannel button for call event
+            OnClickOpen(channelReference);
         });
     }
 
@@ -24,10 +29,5 @@ public class ChannelItem : MonoBehaviour
     {
         channelTitle.text = channelReference.title;
         channelCreatorName.text = channelReference.nameCreator;
-    }
-
-    private void OpenChatPainel()
-    {
-        
     }
 }
